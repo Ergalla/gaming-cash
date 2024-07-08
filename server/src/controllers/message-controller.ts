@@ -32,7 +32,7 @@ export const sendMessage = async (req: Request, res: Response) => {
     });
 
     if (newMessage) {
-      await prisma.conversation.update({
+      conversation = await prisma.conversation.update({
         where: { id: conversation.id },
         data: {
           messages: {
