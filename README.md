@@ -8,3 +8,11 @@ Some Features:
 -   👀 Global state management with Redux Toolkit
 -   🐞 Error handling both on the server and on the client
 -   🤫 And much more!
+
+# Run locally
+
+### Setup .env file in the server folder
+
+```js
+DATABASE_URL="..."
+```
