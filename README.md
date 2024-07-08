@@ -15,4 +15,6 @@ Some Features:
 
 ```js
 DATABASE_URL="..."
+JWT_SECRET="..."
+NODE_ENV="..."
 ```
