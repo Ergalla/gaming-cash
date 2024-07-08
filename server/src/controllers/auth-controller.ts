@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../../prisma/prisma.js";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
+import { ValidationError, validationResult } from "express-validator";
 import bcryptjs from "bcryptjs";
 import { toPng } from "jdenticon";
 import fs from "node:fs";
@@ -12,6 +13,13 @@ const __dirname = dirname(__filename);
 
 export const register = async (req: Request, res: Response) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ error: (errors.array() as ValidationError[])[0].msg });
+    }
+
     const { email, username, password } = req.body;
 
     if (!email || !username || !password) {
@@ -71,5 +79,77 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
-  res.send("login");
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ error: (errors.array() as ValidationError[])[0].msg });
+    }
+
+    const { usernameOrEmail, password } = req.body;
+    if (!usernameOrEmail || !password) {
+      return res.status(400).json({ error: "Отсутствуют обязательные поля" });
+    }
+
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+      },
+    });
+    if (!existingUser) {
+      return res.status(400).json({ error: "Неверный логин или пароль" });
+    }
+
+    const isPasswordCorrect = await bcryptjs.compare(
+      password,
+      existingUser.password,
+    );
+    if (!isPasswordCorrect) {
+      return res.status(400).json({ error: "Неверный логин или пароль" });
+    }
+
+    generateToken(existingUser.id, res);
+    res.json({
+      id: existingUser.id,
+      username: existingUser.username,
+      email: existingUser.email,
+      avatarUrl: existingUser.avatarUrl,
+    });
+  } catch (e) {
+    console.error("Login error", e);
+    res.status(500).json({ error: "Ошибка на сервере" });
+  }
+};
+
+export const logout = async (req: Request, res: Response) => {
+  try {
+    res.clearCookie("jwt");
+    res.json({ message: "Вы успешно вышли из системы" });
+  } catch (e) {
+    console.error("Logout error", e);
+    res.status(500).json({ error: "Ошибка на сервере" });
+  }
+};
+
+export const getMe = async (req: Request, res: Response) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "Пользователь не найден" });
+    }
+
+    res.json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      avatarUrl: user.avatarUrl,
+    });
+  } catch (e) {
+    console.error("GetMe error", e);
+    res.status(500).json({ error: "Ошибка на сервере" });
+  }
 };

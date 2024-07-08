@@ -1,5 +1,6 @@
 import express from "express";
 import fs from "fs";
+import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth-route.js";
 import messageRoutes from "./routes/message-route.js";
 import userRoutes from "./routes/user-route.js";
@@ -9,6 +10,7 @@ dotenv.config();
 
 const app = express();
 
+app.use(cookieParser());
 app.use(express.json());
 
 app.set("view engine", "pug");
