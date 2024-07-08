@@ -77,3 +77,27 @@ export const getMessages = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Ошибка на сервере" });
   }
 };
+
+export const getUserConversations = async (req: Request, res: Response) => {
+  try {
+    const authUserId = req.user.id;
+
+    const users = await prisma.user.findMany({
+      where: {
+        id: {
+          not: authUserId,
+        },
+      },
+      select: {
+        id: true,
+        username: true,
+        avatarUrl: true,
+      },
+    });
+
+    return res.json(users);
+  } catch (e) {
+    console.error("Get conversations error", e);
+    res.status(500).json({ error: "Ошибка на сервере" });
+  }
+};
