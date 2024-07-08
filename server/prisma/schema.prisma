@@ -15,7 +15,7 @@ model User {
   avatarUrl        String?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
-  conversationsIds String[]
+  conversationsIds Int[]
   conversations    Conversation[]
   messages         Message[]
 }
@@ -24,9 +24,9 @@ model Conversation {
   id             Int       @id @default(autoincrement())
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-  participantIds String[]
+  participantIds Int[]
   participants   User[]
-  messageIds     String[]
+  messageIds     Int[]
   messages       Message[]
 }
 
