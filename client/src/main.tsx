@@ -6,14 +6,12 @@ import "./index.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider } from "./components/theme-provider";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Auth } from "./pages/auth";
 import { Categories } from "./pages/categories";
 import { Layout } from "./components/layout";
 
 const container = document.getElementById("root");
 
 const router = createBrowserRouter([
-  { path: "/auth", element: <Auth /> },
   {
     path: "/",
     element: <Layout />,
