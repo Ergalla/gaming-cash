@@ -11,7 +11,7 @@ import {
 import { CiSearch } from "react-icons/ci";
 import { ThemeContext } from "../theme-provider";
 import { PiMoonLight, PiSunLight } from "react-icons/pi";
-import { AuthModal } from "../auth-modal";
+import { AuthModal } from "../../features/auth-modal";
 
 export const Header = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);

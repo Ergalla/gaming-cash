@@ -42,18 +42,14 @@ export const AuthModal = ({
               {type === "register" ? (
                 <Input
                   radius="full"
-                  autoFocus
                   label="Почта"
                   placeholder="Введите адрес электронной почты"
-                  variant="bordered"
                 />
               ) : (
                 <Input
                   radius="full"
-                  autoFocus
                   label="Логин"
                   placeholder="Введите адрес электронной почты или логин"
-                  variant="bordered"
                 />
               )}
               {type === "register" && (
@@ -61,7 +57,6 @@ export const AuthModal = ({
                   radius="full"
                   label="Имя пользователя"
                   placeholder="Введите имя пользователя"
-                  variant="bordered"
                 />
               )}
               <Input
@@ -69,7 +64,6 @@ export const AuthModal = ({
                 label="Пароль"
                 placeholder="Введите пароль"
                 type="password"
-                variant="bordered"
               />
               <div className="flex py-2 px-1 justify-between">
                 <Link
