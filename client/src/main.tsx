@@ -8,6 +8,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Categories } from "./pages/categories";
 import { Layout } from "./components/layout";
+import { AuthGuard } from "./features/auth-guard";
 
 const container = document.getElementById("root");
 
@@ -27,7 +28,9 @@ if (container) {
       <Provider store={store}>
         <NextUIProvider>
           <ThemeProvider>
-            <RouterProvider router={router} />
+            <AuthGuard>
+              <RouterProvider router={router} />
+            </AuthGuard>
           </ThemeProvider>
         </NextUIProvider>
       </Provider>

@@ -1,9 +1,17 @@
 import type { Action, ThunkAction } from "@reduxjs/toolkit";
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
+import { api } from "./services/api";
+import user from "../features/userSlice";
 
 export const store = configureStore({
-  reducer: {},
+  reducer: {
+    [api.reducerPath]: api.reducer,
+    user,
+  },
+  middleware: getDefaultMiddleware => {
+    return getDefaultMiddleware().concat(api.middleware);
+  },
 });
 
 setupListeners(store.dispatch);
