@@ -1,19 +1,32 @@
 import React, { useContext } from "react";
 import {
   Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Input,
   Navbar,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
   useDisclosure,
+  User,
 } from "@nextui-org/react";
 import { CiSearch } from "react-icons/ci";
 import { ThemeContext } from "../theme-provider";
 import { PiMoonLight, PiSunLight } from "react-icons/pi";
 import { AuthModal } from "../../features/auth-modal";
+import { useSelector } from "react-redux";
+import { selectIsAuthenticated, selectUser } from "../../features/userSlice";
+import { BASE_URL } from "../../app/constants";
+import { useLogoutMutation } from "../../app/services/authApi";
+import { hasErrorField } from "../../utils/has-error-field";
 
 export const Header = () => {
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
+  const [logout] = useLogoutMutation();
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [type, setType] = React.useState<"login" | "register">("register");
@@ -21,6 +34,16 @@ export const Header = () => {
   const handleOpen = (type: "login" | "register") => {
     setType(type);
     onOpen();
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout().unwrap();
+    } catch (error) {
+      if (hasErrorField(error)) {
+        console.error(error.data.error);
+      }
+    }
   };
 
   return (
@@ -45,18 +68,47 @@ export const Header = () => {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        <Button
-          className="h-10 rounded-3xl bg-purple-600 text-white"
-          onClick={() => handleOpen("register")}
-        >
-          Зарегистрироваться
-        </Button>
-        <Button
-          className="h-10 rounded-3xl"
-          onClick={() => handleOpen("login")}
-        >
-          Войти
-        </Button>
+        {!isAuthenticated ? (
+          <>
+            <Button
+              className="h-10 rounded-3xl bg-purple-600 text-white"
+              onClick={() => handleOpen("register")}
+            >
+              Зарегистрироваться
+            </Button>
+            <Button
+              className="h-10 rounded-3xl"
+              onClick={() => handleOpen("login")}
+            >
+              Войти
+            </Button>
+          </>
+        ) : (
+          <Dropdown
+            placement="bottom-end"
+            className={`${theme}  text-foreground`}
+          >
+            <DropdownTrigger>
+              <User
+                name={user?.username}
+                description="Баланс: 0 ₽"
+                avatarProps={{ src: `${BASE_URL}${user?.avatarUrl}` }}
+                className="cursor-pointer"
+                as="button"
+              />
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Profile Actions" variant="flat">
+              <DropdownItem key="profile" className="h-14 gap-2">
+                <p className="font-semibold">Вошли как</p>
+                <p className="font-semibold">{user?.email}</p>
+              </DropdownItem>
+              <DropdownItem key="settings">Настройки</DropdownItem>
+              <DropdownItem key="logout" color="danger" onPress={handleLogout}>
+                Выйти
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        )}
       </NavbarContent>
       <AuthModal
         isOpen={isOpen}
