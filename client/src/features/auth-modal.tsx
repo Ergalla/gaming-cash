@@ -49,14 +49,14 @@ export const AuthModal = ({
                 <Input
                   radius="full"
                   label="Логин"
-                  placeholder="Введите адрес электронной почты или логин"
+                  placeholder="Введите адрес электронной почты или никнейм"
                 />
               )}
               {type === "register" && (
                 <Input
                   radius="full"
-                  label="Имя пользователя"
-                  placeholder="Введите имя пользователя"
+                  label="Никнейм"
+                  placeholder="Введите никнейм"
                 />
               )}
               <Input

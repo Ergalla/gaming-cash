@@ -11,6 +11,12 @@ export const sendMessage = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Отсутствуют обязательные поля" });
     }
 
+    if (senderId === receiverId) {
+      return res
+        .status(400)
+        .json({ error: "Нельзя отправлять сообщения самому себе" });
+    }
+
     let conversation = await prisma.conversation.findFirst({
       where: { participantIds: { hasEvery: [senderId, receiverId] } },
     });
@@ -19,6 +25,7 @@ export const sendMessage = async (req: Request, res: Response) => {
       conversation = await prisma.conversation.create({
         data: {
           participantIds: { set: [senderId, receiverId] },
+          participants: { connect: [{ id: senderId }, { id: receiverId }] },
         },
       });
     }
@@ -35,6 +42,7 @@ export const sendMessage = async (req: Request, res: Response) => {
       await prisma.conversation.update({
         where: { id: conversation.id },
         data: {
+          updatedAt: newMessage.createdAt,
           messages: {
             connect: {
               id: newMessage.id,
@@ -82,20 +90,36 @@ export const getUserConversations = async (req: Request, res: Response) => {
   try {
     const authUserId = req.user.id;
 
-    const users = await prisma.user.findMany({
+    const conversations = await prisma.conversation.findMany({
       where: {
-        id: {
-          not: authUserId,
-        },
+        participantIds: { has: authUserId },
       },
       select: {
-        id: true,
-        username: true,
-        avatarUrl: true,
+        messages: {
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 1,
+          select: {
+            body: true,
+            createdAt: true,
+          },
+        },
+        participants: {
+          where: { id: { not: authUserId } },
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: "desc",
       },
     });
 
-    return res.json(users);
+    return res.json(conversations);
   } catch (e) {
     console.error("Get conversations error", e);
     res.status(500).json({ error: "Ошибка на сервере" });
