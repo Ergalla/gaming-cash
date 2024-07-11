@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Link,
@@ -11,6 +11,10 @@ import {
 import { useForm } from "react-hook-form";
 import { Input } from "../components/input";
 import { useLoginMutation, useRegisterMutation } from "../app/services/authApi";
+import { hasErrorField } from "../utils/has-error-field";
+import { ErrorMessage } from "../components/error-message";
+import { useSelector } from "react-redux";
+import { selectIsAuthenticated } from "./userSlice";
 
 type AuthFormValues = {
   email: string;
@@ -34,8 +38,11 @@ export const AuthModal = ({
   type,
   setType,
 }: Props) => {
-  const [register, { isLoading: registerLoading }] = useRegisterMutation();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const [register, { isLoading: registerLoading, error }] =
+    useRegisterMutation();
   const [login, { isLoading: loginLoading }] = useLoginMutation();
+  const [errorMessage, setErrorMessage] = useState("");
   const { handleSubmit, control } = useForm<AuthFormValues>({
     mode: "onChange",
     reValidateMode: "onBlur",
@@ -47,16 +54,21 @@ export const AuthModal = ({
     },
   });
 
+  if (isAuthenticated) {
+    return null;
+  }
+
   const onSubmit = async (data: AuthFormValues) => {
     try {
       if (type === "register") {
         await register(data).unwrap();
       } else if (type === "login") {
-        console.log(data);
         await login(data).unwrap();
       }
     } catch (error) {
-      console.error(error);
+      if (hasErrorField(error)) {
+        setErrorMessage(error.data.error);
+      }
     }
   };
 
@@ -69,47 +81,49 @@ export const AuthModal = ({
     >
       <ModalContent>
         {onClose => (
-          <>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <ModalHeader className="flex flex-col gap-1">
               {type === "register" ? "Зарегистрироваться" : "Войти"}
             </ModalHeader>
             <ModalBody>
-              <form className="flex flex-col gap-3">
-                {type === "register" ? (
-                  <Input
-                    name="email"
-                    control={control}
-                    radius="full"
-                    label="Почта"
-                    placeholder="Введите адрес электронной почты"
-                  />
-                ) : (
-                  <Input
-                    name="usernameOrEmail"
-                    control={control}
-                    radius="full"
-                    label="Логин"
-                    placeholder="Введите адрес электронной почты или никнейм"
-                  />
-                )}
-                {type === "register" && (
-                  <Input
-                    name="username"
-                    control={control}
-                    radius="full"
-                    label="Никнейм"
-                    placeholder="Введите никнейм"
-                  />
-                )}
+              {type === "register" ? (
                 <Input
-                  name="password"
+                  name="email"
                   control={control}
                   radius="full"
-                  label="Пароль"
-                  placeholder="Введите пароль"
-                  type="password"
+                  label="Почта"
+                  placeholder="Введите адрес электронной почты"
+                  required="Обязятальное поле"
                 />
-              </form>
+              ) : (
+                <Input
+                  name="usernameOrEmail"
+                  control={control}
+                  radius="full"
+                  label="Логин"
+                  placeholder="Введите адрес электронной почты или никнейм"
+                  required="Обязятальное поле"
+                />
+              )}
+              {type === "register" && (
+                <Input
+                  name="username"
+                  control={control}
+                  radius="full"
+                  label="Никнейм"
+                  placeholder="Введите никнейм"
+                  required="Обязятальное поле"
+                />
+              )}
+              <Input
+                name="password"
+                control={control}
+                radius="full"
+                label="Пароль"
+                placeholder="Введите пароль"
+                type="password"
+                required="Обязятальное поле"
+              />
               <div className="flex py-2 px-1 justify-between">
                 <Link
                   color="primary"
@@ -124,6 +138,7 @@ export const AuthModal = ({
                     : "Еще нет аккаунта?"}
                 </Link>
               </div>
+              <ErrorMessage error={errorMessage} />
             </ModalBody>
             <ModalFooter>
               <Button className="h-10 rounded-3xl" onClick={onClose}>
@@ -131,13 +146,13 @@ export const AuthModal = ({
               </Button>
               <Button
                 className="h-10 rounded-3xl bg-purple-600 text-white"
-                onClick={handleSubmit(onSubmit)}
+                type="submit"
                 isLoading={type === "register" ? registerLoading : loginLoading}
               >
                 {type === "register" ? "Зарегистрироваться" : "Войти"}
               </Button>
             </ModalFooter>
-          </>
+          </form>
         )}
       </ModalContent>
     </Modal>
