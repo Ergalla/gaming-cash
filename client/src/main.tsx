@@ -9,6 +9,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Categories } from "./pages/categories";
 import { Layout } from "./components/layout";
 import { AuthGuard } from "./features/auth-guard";
+import { Messages } from "./pages/messages";
 
 const container = document.getElementById("root");
 
@@ -16,7 +17,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
-    children: [{ path: "", element: <Categories /> }],
+    children: [
+      { path: "", element: <Categories /> },
+      { path: "/messages", element: <Messages /> },
+    ],
   },
 ]);
 

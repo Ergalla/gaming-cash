@@ -15,17 +15,19 @@ import {
 } from "@nextui-org/react";
 import { CiSearch } from "react-icons/ci";
 import { ThemeContext } from "../theme-provider";
-import { PiMoonLight, PiSunLight } from "react-icons/pi";
+import { PiChatsCircleLight, PiMoonLight, PiSunLight } from "react-icons/pi";
 import { AuthModal } from "../../features/auth-modal";
 import { useSelector } from "react-redux";
 import { selectIsAuthenticated, selectUser } from "../../features/userSlice";
 import { BASE_URL } from "../../app/constants";
 import { useLogoutMutation } from "../../app/services/authApi";
 import { hasErrorField } from "../../utils/has-error-field";
+import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
+  const navigate = useNavigate();
   const [logout] = useLogoutMutation();
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -66,6 +68,15 @@ export const Header = () => {
         >
           {theme === "light" ? <PiMoonLight /> : <PiSunLight />}
         </NavbarItem>
+        {isAuthenticated && (
+          <NavbarItem
+            className="lg:flex items-center text-2xl cursor-pointer"
+            onClick={() => navigate("/messages")}
+          >
+            <PiChatsCircleLight />
+            <p className="text-small ml-2">Сообщения</p>
+          </NavbarItem>
+        )}
       </NavbarContent>
       <NavbarContent justify="end">
         {!isAuthenticated ? (
