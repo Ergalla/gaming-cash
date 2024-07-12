@@ -39,8 +39,7 @@ export const AuthModal = ({
   setType,
 }: Props) => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const [register, { isLoading: registerLoading, error }] =
-    useRegisterMutation();
+  const [register, { isLoading: registerLoading }] = useRegisterMutation();
   const [login, { isLoading: loginLoading }] = useLoginMutation();
   const [errorMessage, setErrorMessage] = useState("");
   const { handleSubmit, control } = useForm<AuthFormValues>({
