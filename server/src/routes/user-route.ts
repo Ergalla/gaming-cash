@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { updateUser } from "../controllers/user-controller.js";
+import { getUserById, updateUser } from "../controllers/user-controller.js";
 
 const router = express.Router();
 
@@ -16,5 +16,6 @@ const storage = multer.diskStorage({
 const uploads = multer({ storage });
 
 router.put("/:id", uploads.single("avatar"), updateUser);
+router.get("/:id", uploads.single("avatar"), getUserById);
 
 export default router;
