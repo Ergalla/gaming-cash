@@ -19,7 +19,7 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: "", element: <Categories /> },
-      { path: "/messages", element: <Messages /> },
+      { path: "messages/:id?", element: <Messages /> },
     ],
   },
 ]);
