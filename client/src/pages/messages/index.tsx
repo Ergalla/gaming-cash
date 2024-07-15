@@ -22,7 +22,6 @@ import { Message } from "../../components/message";
 import { Input } from "../../components/input";
 import { useForm } from "react-hook-form";
 import { hasErrorField } from "../../utils/has-error-field";
-import { AiFillMail } from "react-icons/ai";
 import { IoIosSend } from "react-icons/io";
 
 type messageFormValues = {
