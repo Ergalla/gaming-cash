@@ -25,7 +25,7 @@ export const Message = ({
     <div className={`flex p-4 items-center ${chatClass}`}>
       {!fromMe && <Avatar src={img} className="mr-5" />}
       <p
-        className={`text-sm ${fromMe ? "bg-purple-600 text-white" : "bg-divider text-foreground"} p-3 rounded-full md:text-md`}
+        className={`text-sm ${fromMe ? "bg-purple-600 text-white" : "bg-divider"} p-3 rounded-full md:text-md`}
       >
         {message.body}
       </p>
