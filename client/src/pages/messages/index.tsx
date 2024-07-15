@@ -112,7 +112,7 @@ export const Messages = () => {
               ))}
           </CardBody>
           <Divider />
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
             <Input
               name="message"
               control={control}
