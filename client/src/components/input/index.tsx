@@ -4,8 +4,10 @@ import { Input as NextInput } from "@nextui-org/react";
 
 type Props = {
   name: string;
-  label: string;
+  label?: string;
+  className?: string;
   radius?: "none" | "sm" | "md" | "lg" | "full" | undefined;
+  size?: "sm" | "md" | "lg" | undefined;
   placeholder?: string;
   type?: string;
   control: Control<any>;
@@ -16,10 +18,12 @@ type Props = {
 export const Input = ({
   name,
   label,
+  className,
   placeholder,
   type,
   control,
   radius,
+  size,
   required = "",
   endContent,
 }: Props) => {
@@ -37,8 +41,10 @@ export const Input = ({
     <NextInput
       id={name}
       label={label}
+      className={className}
       type={type}
       radius={radius}
+      size={size}
       placeholder={placeholder}
       value={field.value}
       name={field.name}
