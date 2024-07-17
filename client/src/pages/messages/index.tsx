@@ -41,8 +41,12 @@ export const Messages = () => {
     },
   });
   const { data: conversations } = useGetConversationsQuery();
-  const { data: messages, isLoading } = useGetMessagesQuery(Number(params.id));
-  const { data: user } = useGetUserByIdQuery(Number(params.id));
+  const { data: messages, isLoading } = useGetMessagesQuery(Number(params.id), {
+    skip: !params.id,
+  });
+  const { data: user } = useGetUserByIdQuery(Number(params.id), {
+    skip: !params.id,
+  });
   const [sendMessage] = useSendMessageMutation();
 
   if (!isAuthenticated) {
