@@ -12,14 +12,14 @@ const io = new Server(server, {
 export const getReceiverSocketId = (receiverId: number) =>
   userSocketMap[receiverId];
 
-const userSocketMap: { [key: number]: number } = {};
+const userSocketMap: { [key: number]: string } = {};
 
 io.on("connection", (socket) => {
   console.log("New client connected", socket.id);
 
-  const userId = parseInt(socket.handshake.query.userId as string);
+  const userId = Number(socket.handshake.query.userId);
 
-  if (userId) userSocketMap[userId] = parseInt(socket.id);
+  if (userId) userSocketMap[userId] = socket.id;
 
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
