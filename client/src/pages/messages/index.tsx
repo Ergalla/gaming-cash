@@ -76,7 +76,7 @@ export const Messages = () => {
               onClick={() =>
                 navigate(`/messages/${conversation.participants[0].id}`)
               }
-              className="cursor-pointer mb-5 w-full justify-start"
+              className="cursor-pointer mb-5 w-full justify-start mr-5"
               name={conversation.participants[0].username}
               avatarProps={{
                 src: `${BASE_URL}${conversation.participants[0].avatarUrl}`,

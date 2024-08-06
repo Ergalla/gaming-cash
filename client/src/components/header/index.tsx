@@ -50,7 +50,7 @@ export const Header = () => {
 
   return (
     <Navbar>
-      <NavbarBrand>
+      <NavbarBrand onClick={() => navigate("/")} className="cursor-pointer">
         <p className="text-2xl font-semibold">Gaming</p>
         <span className="text-purple-600 text-2xl font-semibold">Cash</span>
       </NavbarBrand>
